@@ -1,0 +1,6 @@
+__pycache__
+*.ssa
+*.ssa_opt
+*.asm
+*.h
+*.hex

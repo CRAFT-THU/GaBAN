@@ -1,0 +1,19 @@
+[package]
+name = "compiler"
+version = "0.1.0"
+authors = ["Jiajie Chen <c@jia.je>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.40"
+structopt = "0.3.21"
+typed-arena = "2.0.1"
+
+# speedup compilation
+[profile.dev]
+split-debuginfo = 'unpacked'
+
+[profile.test]
+split-debuginfo = 'unpacked'

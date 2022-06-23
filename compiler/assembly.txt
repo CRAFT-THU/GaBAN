@@ -1,0 +1,72 @@
+instruction format:
+32 bit instruction
+32 registers -> 5 bits
+32 memory sites -> 5 bits
+from msb to lsb:
+6 bits src1/imm[18:13]
+6 bits src2/imm[12:7]
+6 bits src3/imm[6:1]
+1 bit imm[0]
+6 bits dst
+7 bits op
+
+src/dst:
+1 bit: 0->register, 1->mem
+5 bit: index
+
+op:
+2 bits src type:
+00: imm19
+01: src1/src1+imm13
+10: src1+src2
+11: src1+src2+src3
+
+5 bits: index
+
+00 00000: end_loop
+00 00001: lu_imm: imm[18:0] << 13
+00 00010: ls_imm: signed(imm[18:0])
+00 00011: pois_imm: poisson distribution with imm=exp(-lambda)*(2^16)
+
+01 00000: not_i: ~src1
+01 00001: gt_i_imm: src1 > signed(imm[12:0])
+01 00010: sub_i_imm: src1 - signed(imm[12:0])
+01 00011: or_i_imm: src1 | imm[12:0]
+01 00100: move: src1
+01 00101: fire: src1
+01 00110: exp_f: exp(src1)
+
+10 00000: and_i: src1 & src2
+10 00001: or_i: src1 | src2
+10 00010: sub_i: src1 - src2
+10 00011: mul_f: src1 * src2
+10 00100: add_f: src1 + src2
+10 00101: sub_f: src1 - src2
+10 00110: ge_f: src1 >= src2
+10 00111: div_f: src1 / src2
+10 01000: le_f: src1 <= src2
+10 01001: mul_x: src1 * src2
+10 01010: add_x: src1 + src2
+10 01011: sub_x: src1 - src2
+10 01100: ge_x: src1 >= src2
+10 01101: le_x: src1 <= src2
+
+11 00000: muladd_f: src1 * src2 + src3
+11 00001: mulsub_f: src1 * src2 - src3
+11 00010: mux: src1 ? src2 : src3
+
+addr gen instructions:
+
+first dword:
+access type [31:30]: Loop=0, Strided=1, Indexed=2
+stride [29:20]
+count [19:0]
+
+second dword:
+base addr
+
+third dword:
+index addr
+
+strided: mem[base]
+indexed: mem[index + mem[base]]
